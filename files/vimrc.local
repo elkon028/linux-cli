@@ -1,0 +1,15 @@
+set ai                    "自动缩进，与上一行保持一致的自动空格
+set ic                    "在查询模型与匹配模式下忽略大小写
+"set number                "左侧显示行号
+set showmatch             "显示括号配对，并高亮显示相匹配的括号
+set showmode              "文本输入模型下，加亮显示模式指示器
+set showcmd               "在状态栏显示所执行的指令，未完成的指令片段
+set warn                  "长行显示自动折行
+set cindent               "以C/C++模式缩进
+set ruler                 "打开状态栏标尺
+set scrolloff=6           "设置光标离窗口上下6行时窗口自动滚动
+set tabstop=4             "设置Tab长度为4
+set shiftwidth=4          "设置自动缩进
+set tabstop=4             "设置缩进展示的宽度
+set expandtab             "Tab转空格
+set wrap                  "自动换行显示

@@ -1,0 +1,18 @@
+export ZSH=/opt/ohmyzsh
+
+
+
+ZSH_THEME="robbyrussell"
+
+plugins=(
+  git
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+
+source $ZSH/oh-my-zsh.sh
+
+# 加载 powerlevel10k 主题
+source /opt/powerlevel10k/powerlevel10k.zsh-theme
+
+source /etc/profile

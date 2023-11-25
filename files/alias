@@ -1,0 +1,8 @@
+
+# 设置别名
+#alias open='nautilus .'
+alias l='ls -lah --time-style "+%Y-%m-%d %H:%M:%S"'
+alias la='ls -lAh --time-style "+%Y-%m-%d %H:%M:%S"'
+alias ll='ls -lh --time-style "+%Y-%m-%d %H:%M:%S"'
+alias ls='ls --color=tty --time-style "+%Y-%m-%d %H:%M:%S"'
+alias lsa='ls -lah --time-style "+%Y-%m-%d %H:%M:%S"'

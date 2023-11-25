@@ -408,6 +408,23 @@ install_docker(){
   fi
 }
 
+install_nextcloud(){
+  docker pull nextcloud/all-in-one:latest
+  docker run -d \
+    --init \
+    --sig-proxy=false \
+    --name nextcloud-aio-mastercontainer \
+    --restart always \
+    --publish 8080:8080 \
+    --env AIO_DISABLE_BACKUP_SECTION=true \
+    --env APACHE_PORT=11000 \
+    --env APACHE_IP_BINDING=0.0.0.0 \
+    --env NEXTCLOUD_DATADIR=/www/ncdata \
+    --volume nextcloud_aio_mastercontainer:/mnt/docker-aio-config \
+    --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+    nextcloud/all-in-one:latest
+}
+
 install_btpanel(){
   wget -O bt-install.sh https://download.bt.cn/install/install-ubuntu_6.0.sh && bash bt-install.sh ed8484bec
 
@@ -509,7 +526,7 @@ linux_cli(){
     uninstall_snap
   fi
 
-  linux_cli
+  # linux_cli
 }
 
 if [ $(whoami) != "root" ];then

@@ -42,11 +42,16 @@ set_sudo_nopasswd(){
   gmsg 'sudo免密设置成功'
 }
 
-set_resolve_conf(){
+set_eth_resolve_conf(){
   rm -f /etc/resolv.conf
   ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
-  gmsg '禁止重置 resolv.conf 配置成功'
+  # 修改系统网卡ens** 为eth0
+  sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"/' /etc/default/grub
+
+  update-grub
+
+  gmsg '网卡名 与 resolv.conf 配置成功'
 }
 
 set_systime_sync(){
@@ -357,6 +362,52 @@ install_jdk8(){
   fi
 }
 
+install_docker(){
+  DOCKER_CHECK=$(which docker)
+  if [ "$?" == "0" ];then
+    rmsg 'docker已安装(跳过)'
+  else
+    apt-get install -y ca-certificates curl gnupg lsb-release
+
+    mkdir -p /etc/apt/keyrings
+
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+      | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+    echo "deb [arch="$(dpkg --print-architecture)" \
+      signed-by=/etc/apt/keyrings/docker.gpg] \
+      https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" \
+      | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    apt update
+
+    apt install -y docker-ce docker-ce-cli \
+      containerd.io docker-buildx-plugin docker-compose-plugin
+
+    cat $CURRENT_DIR/files/daemon.json > /etc/docker/daemon.json
+
+    systemctl enable docker
+    systemctl restart docker
+
+    # 查看是否设置成功
+    docker info
+    # 查看版本号
+    docker -v
+
+    bmsg '拉取 portainer 镜像并创建容器'
+
+    docker pull portainer/portainer-ce:linux-amd64-2.19.3-alpine
+
+    docker run -d -p 9000:9000 --name portainer --restart=always \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v portainer_data:/data \
+      portainer/portainer-ce:linux-amd64-2.19.3-alpine
+
+    gmsg 'docker安装成功'
+  fi
+}
+
 install_btpanel(){
   wget -O bt-install.sh https://download.bt.cn/install/install-ubuntu_6.0.sh && bash bt-install.sh ed8484bec
 
@@ -370,11 +421,10 @@ linux_cli(){
   echo -e ""
   echo -e " (0) 退出                    (ALL) 执行全部"
   echo -e " (1) 系统更新                (2) 安装软件包"
-  echo -e " (3) sudo免密码              (4) 禁止重置 resolv.conf"
+  echo -e " (3) sudo免密码              (4) 网卡名与resolv.conf设置"
   echo -e " (5) 双系统时间同步          (6) 设置指令别名"
   echo -e " (7) 安装 jdk8               (8) 安装 windterm"
-  echo -e "------------------------------------------------------------------"
-  echo -e " (10) 安装字体"
+  echo -e " (9) 安装 docker             (10) 安装字体"
   echo -e " (11) 安装 sshd              (12) 安装 nodejs"
   echo -e " (13) 安装 git               (14) 安装 pyenv"
   echo -e " (15) 安装 pycharm           (16) 安装 vscode"
@@ -392,7 +442,7 @@ linux_cli(){
     update_system
     install_package
     set_sudo_nopasswd
-    set_resolve_conf
+    set_eth_resolve_conf
     set_systime_sync
     set_alias
     install_sshd
@@ -406,6 +456,7 @@ linux_cli(){
     install_grub2_themes
     install_ohmyzsh
     install_windterm
+    install_docker
     install_jdk8
 
     install_fcitx5
@@ -419,7 +470,7 @@ linux_cli(){
   elif [ "$input" == 3 ];then
     set_sudo_nopasswd
   elif [ "$input" == 4 ];then
-    set_resolve_conf
+    set_eth_resolve_conf
   elif [ "$input" == 5 ];then
     set_systime_sync
   elif [ "$input" == 6 ];then
@@ -428,6 +479,8 @@ linux_cli(){
     install_jdk8
   elif [ "$input" == 8 ];then
     install_windterm
+  elif [ "$input" == 9 ];then
+    install_docker
   elif [ "$input" == 10 ];then
     install_fonts
   elif [ "$input" == 11 ];then

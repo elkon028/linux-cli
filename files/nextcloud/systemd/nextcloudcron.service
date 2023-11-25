@@ -1,0 +1,8 @@
+[Unit]
+Description=Nextcloud cron.php job
+
+[Service]
+User=www
+ExecCondition=/usr/bin/php -f /www/wwwroot/default/nextcloud/occ status -e
+ExecStart=/usr/bin/php -f /www/wwwroot/default/nextcloud/cron.php
+KillMode=process

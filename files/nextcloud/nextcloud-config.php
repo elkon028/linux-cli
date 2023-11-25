@@ -1,0 +1,27 @@
+<?php
+$CONFIG = array(
+    'instanceid' => 'ocwcx4m2rthk',
+    'passwordsalt' => 'GbJNI+qpaKaGqLxCz0mw/9m+G4U6a1',
+    'secret' => 'IMxMN23rudHkzkDw96FCWj9mrHFlItjOmOpQ9lvPgi5SsnZf',
+    'trusted_domains' =>  ['*'],
+    'datadirectory' => '/www/wwwroot/default/nextcloud/data',
+    'dbtype' => 'mysql',
+    'version' => '27.1.4.1',
+    'overwrite.cli.url' => 'http://127.0.0.1/nextcloud',
+    'dbname' => 'nextcloud',
+    'dbhost' => 'localhost',
+    'dbport' => '',
+    'dbtableprefix' => 'oc_',
+    'mysql.utf8mb4' => true,
+    'dbuser' => 'nextcloud',
+    'dbpassword' => 'nextcloud',
+    'installed' => true,
+    'default_phone_region' => 'CN',
+    'memcache.local' => '\OC\Memcache\Redis',
+    'memcache.distributed' => '\OC\Memcache\Redis',
+    'memcache.locking' => '\OC\Memcache\Redis',
+    'redis' => array(
+        'host' => 'localhost',
+        'port' => 6379,
+    ),
+);

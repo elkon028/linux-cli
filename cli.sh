@@ -29,7 +29,8 @@ update_system(){
 
 install_package(){
   apt-get install -y zsh htop vim vim-gtk net-tools vlc \
-    gnome-tweaks gnome-shell-extension-manager
+    gnome-tweaks gnome-shell-extension-manager \
+    ffmpeg imagemagick libgmp-dev
 
   cat $CURRENT_DIR/files/vimrc.local > /etc/vim/vimrc.local
 
@@ -409,20 +410,34 @@ install_docker(){
 }
 
 install_nextcloud(){
-  docker pull nextcloud/all-in-one:latest
-  docker run -d \
-    --init \
-    --sig-proxy=false \
-    --name nextcloud-aio-mastercontainer \
-    --restart always \
-    --publish 8080:8080 \
-    --env AIO_DISABLE_BACKUP_SECTION=true \
-    --env APACHE_PORT=11000 \
-    --env APACHE_IP_BINDING=0.0.0.0 \
-    --env NEXTCLOUD_DATADIR=/www/ncdata \
-    --volume nextcloud_aio_mastercontainer:/mnt/docker-aio-config \
-    --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-    nextcloud/all-in-one:latest
+  # see: https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html
+  # see: https://docs.nextcloud.com/server/stable/admin_manual/installation/nginx.html
+
+  wget -O nextcloud.tar.bz2 -c https://download.nextcloud.com/server/releases/nextcloud-27.1.4.tar.bz2
+  tar jxvf nextcloud.tar.bz2
+  mv nextcloud /www/wwwroot/
+  chown -R www:www /www/wwwroot/nextcloud
+  rm -f nextcloud.tar.bz2
+
+  \cp $CURRENT_DIR/files/nextcloud/systemd/* /etc/systemd/system/
+  chmod +x /etc/systemd/system/nextcloudcron.*
+
+  systemctl enable --now nextcloudcron.timer
+
+  # docker pull nextcloud/all-in-one:latest
+  # docker run -d \
+  #   --init \
+  #   --sig-proxy=false \
+  #   --name nextcloud-aio-mastercontainer \
+  #   --restart always \
+  #   --publish 8080:8080 \
+  #   --env AIO_DISABLE_BACKUP_SECTION=true \
+  #   --env APACHE_PORT=11000 \
+  #   --env APACHE_IP_BINDING=0.0.0.0 \
+  #   --env NEXTCLOUD_DATADIR=/www/ncdata \
+  #   --volume nextcloud_aio_mastercontainer:/mnt/docker-aio-config \
+  #   --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+  #   nextcloud/all-in-one:latest
 }
 
 install_btpanel(){

@@ -153,7 +153,7 @@ install_git(){
   else
     apt-get install -y git
 
-    useradd git -s /sbin/nologin
+    useradd git -s /usr/bin/bash
 
     git config --system user.name "elkon"
     git config --system user.email "elkon@qq.com"

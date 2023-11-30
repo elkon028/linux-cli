@@ -11,6 +11,7 @@ $CONFIG = array(
     'dbtype' => 'mysql',
     'version' => '27.1.4.1',
     'overwrite.cli.url' => 'http://127.0.0.1/nextcloud',
+    'overwriteprotocol' => 'http',
     'dbname' => 'nextcloud',
     'dbhost' => 'localhost',
     'dbport' => '',

@@ -465,10 +465,12 @@ install_phpmyadmin(){
 
   \cp -f $PMA_ROOT/config.sample.inc.php $PMA_CONFIG
 
+  # 设置 blowfish_secret
   sed -i "s/^\$cfg\['blowfish_secret'\]\s*=\s*''/\$cfg\['blowfish_secret'\] = '$PMA_SAMPLE'/" $PMA_CONFIG
-
+  # 开启 phpMyAdmin configuration storage settings
+  sed -i "s/'pmapass'/'pma'/" $PMA_CONFIG
   sed -i "/^\/\/\s\$cfg\['Servers'\]\[\$i\]\['[^']*']\s*=\s*'p/s/\/\/\s//" $PMA_CONFIG
-
+  # 隐藏数据库
   echo '$cfg['\''Servers'\''][$i]['\''hide_db'\''] = '\''^(information_schema|performance_schema|sys|mysql)$'\'';' >> $PMA_CONFIG
 
   chown -R www:www $PMA_ROOT

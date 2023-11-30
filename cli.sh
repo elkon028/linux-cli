@@ -499,6 +499,7 @@ linux_cli(){
     install_windterm
     install_docker
     install_jdk8
+    install_gogs
 
     install_fcitx5
     uninstall_snap

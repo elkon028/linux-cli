@@ -454,6 +454,28 @@ install_btpanel(){
   rm -f bt-install.sh
 }
 
+install_phpmyadmin(){
+  PMA_ROOT=/www/wwwroot/default/pma
+  PMA_CONFIG=$PMA_ROOT/config.inc.php
+  PMA_SAMPLE=$(date +%s%N | md5sum |cut -c 1-32)
+  wget -O pma.zip -c https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.zip
+  unzip pma.zip
+
+  mv -f phpMyAdmin-5.2.1-all-languages $PMA_ROOT
+
+  \cp -f $PMA_ROOT/config.sample.inc.php $PMA_CONFIG
+
+  sed -i "s/^\$cfg\['blowfish_secret'\]\s*=\s*''/\$cfg\['blowfish_secret'\] = '$PMA_SAMPLE'/" $PMA_CONFIG
+
+  sed -i "/^\/\/\s\$cfg\['Servers'\]\[\$i\]\['[^']*']\s*=\s*'p/s/\/\/\s//" $PMA_CONFIG
+
+  echo '$cfg['\''Servers'\''][$i]['\''hide_db'\''] = '\''^(information_schema|performance_schema|sys|mysql)$'\'';' >> $PMA_CONFIG
+
+  chown -R www:www $PMA_ROOT
+
+  rm -rf pma.zip
+}
+
 linux_cli(){
   echo -e "=================================================================="
   echo -e "\033[32m Linux CLI \033[0m"
@@ -471,7 +493,7 @@ linux_cli(){
   echo -e " (17) 安装 chrome            (18) 安装 grub2 主题"
   echo -e " (19) 安装 ohmyzsh           (20) 安装 fcitx5"
   echo -e " (21) 安装宝塔               (22) 卸载 snap"
-  echo -e " (23) 安装 gogs"
+  echo -e " (23) 安装 gogs              (24) 安装 phpMyAdmin"
   echo -e "\033[32m $LAST_MESSAGE \033[0m"
   echo -e "=================================================================="
 
@@ -505,6 +527,7 @@ linux_cli(){
     uninstall_snap
 
     install_btpanel
+    install_phpmyadmin
   elif [ "$input" == 1 ];then
     update_system
   elif [ "$input" == 2 ];then
@@ -551,6 +574,8 @@ linux_cli(){
     uninstall_snap
   elif [ "$input" == 23 ];then
     install_gogs
+  elif [ "$input" == 24 ];then
+    install_phpmyadmin
   fi
 
   # linux_cli

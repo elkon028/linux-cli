@@ -147,10 +147,6 @@ install_nodejs(){
 }
 
 install_git(){
-  GIT_CHECK=$(which git)
-  if [ "$?" == "0" ];then
-    rmsg 'git已安装(跳过)'
-  else
     apt-get install -y git
 
     useradd git -s /usr/bin/bash
@@ -164,7 +160,6 @@ install_git(){
     git config --system alias.cmp '!f() { git pull && git add -A && git commit -m "cmd:add commit push" && git push; }; f'
 
     gmsg 'git安装成功'
-  fi
 }
 
 install_pyenv(){
@@ -174,6 +169,8 @@ install_pyenv(){
     git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
     git clone https://github.com/pyenv/pyenv-virtualenv.git $PYENV_ROOT/plugins/pyenv-virtualenv
     cd $PYENV_ROOT && src/configure && make -C src
+    
+    chmod -R 777 $PYENV_ROOT/shims
 
     echo "export PYENV_ROOT=$PYENV_ROOT" >> /etc/profile
     echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> /etc/profile
@@ -345,7 +342,10 @@ install_jdk8(){
   if [ "$?" == "0" ];then
     rmsg 'jdk8已安装(跳过)'
   else
-    wget -c https://github.com/elkon028/linux-cli/releases/download/attach/jdk-8u381-linux-x64.tar.gz
+    if [ ! -f "./jdk-8u381-linux-x64.tar.gz" ]; then
+        wget -c https://github.com/elkon028/linux-cli/releases/download/attach/jdk-8u381-linux-x64.tar.gz
+    fi
+    
     tar zxf jdk-8u381-linux-x64.tar.gz
     mkdir -p /usr/local/java
     mv jdk1.8.0_381 /usr/local/java/jdk8
@@ -461,7 +461,7 @@ install_phpmyadmin(){
   wget -O pma.zip -c https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.zip
   unzip pma.zip
 
-  mv -f phpMyAdmin-5.2.1-all-languages $PMA_ROOT
+  mv -f ./phpMyAdmin-5.2.1-all-languages $PMA_ROOT
 
   \cp -f $PMA_ROOT/config.sample.inc.php $PMA_CONFIG
 
@@ -496,6 +496,7 @@ linux_cli(){
   echo -e " (19) 安装 ohmyzsh           (20) 安装 fcitx5"
   echo -e " (21) 安装宝塔               (22) 卸载 snap"
   echo -e " (23) 安装 gogs              (24) 安装 phpMyAdmin"
+  echo -e " (25) 安装 nextcloud"
   echo -e "\033[32m $LAST_MESSAGE \033[0m"
   echo -e "=================================================================="
 
@@ -578,6 +579,8 @@ linux_cli(){
     install_gogs
   elif [ "$input" == 24 ];then
     install_phpmyadmin
+  elif [ "$input" == 25 ];then
+    install_nextcloud
   fi
 
   # linux_cli

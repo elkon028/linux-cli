@@ -434,7 +434,7 @@ install_gogs(){
 
   mv -f $CURRENT_DIR/gogs /www/wwwroot/
 
-  [ ! -d "/home/git" ] mkdir -p /home/git && chown -R git:git /home/git
+  [ ! -d "/home/git" ] && mkdir -p /home/git && chown -R git:git /home/git
   mkdir -p /www/wwwroot/gogs-repositories
 
   chown -R git:git /www/wwwroot/gogs

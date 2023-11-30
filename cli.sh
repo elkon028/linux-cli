@@ -415,29 +415,37 @@ install_nextcloud(){
 
   wget -O nextcloud.tar.bz2 -c https://download.nextcloud.com/server/releases/nextcloud-27.1.4.tar.bz2
   tar jxvf nextcloud.tar.bz2
-  mv nextcloud /www/wwwroot/
-  chown -R www:www /www/wwwroot/nextcloud
+  mv nextcloud /www/wwwroot/default/
+  chown -R www:www /www/wwwroot/default/nextcloud
   rm -f nextcloud.tar.bz2
 
   \cp $CURRENT_DIR/files/nextcloud/systemd/* /etc/systemd/system/
   chmod +x /etc/systemd/system/nextcloudcron.*
 
   systemctl enable --now nextcloudcron.timer
+}
 
-  # docker pull nextcloud/all-in-one:latest
-  # docker run -d \
-  #   --init \
-  #   --sig-proxy=false \
-  #   --name nextcloud-aio-mastercontainer \
-  #   --restart always \
-  #   --publish 8080:8080 \
-  #   --env AIO_DISABLE_BACKUP_SECTION=true \
-  #   --env APACHE_PORT=11000 \
-  #   --env APACHE_IP_BINDING=0.0.0.0 \
-  #   --env NEXTCLOUD_DATADIR=/www/ncdata \
-  #   --volume nextcloud_aio_mastercontainer:/mnt/docker-aio-config \
-  #   --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-  #   nextcloud/all-in-one:latest
+install_gogs(){
+  wget -O gogs.tar.gz -c https://github.com/gogs/gogs/releases/download/v0.13.0/gogs_0.13.0_linux_amd64.tar.gz
+  tar zxvf gogs.tar.gz
+
+  sed -i 's#/home/git/gogs#/www/wwwroot/gogs#' $CURRENT_DIR/gogs/scripts/systemd/gogs.service
+
+
+  mv -f $CURRENT_DIR/gogs /www/wwwroot/
+
+  [ ! -d "/home/git" ] mkdir -p /home/git && chown -R git:git /home/git
+  mkdir -p /www/wwwroot/gogs-repositories
+
+  chown -R git:git /www/wwwroot/gogs
+  chown -R git:git /www/wwwroot/gogs-repositories
+
+  \cp -f /www/wwwroot/gogs/scripts/systemd/gogs.service /etc/systemd/system/
+
+  systemctl enable --now gogs.service
+
+  rm -f gogs.tar.gz
+
 }
 
 install_btpanel(){
@@ -463,6 +471,7 @@ linux_cli(){
   echo -e " (17) 安装 chrome            (18) 安装 grub2 主题"
   echo -e " (19) 安装 ohmyzsh           (20) 安装 fcitx5"
   echo -e " (21) 安装宝塔               (22) 卸载 snap"
+  echo -e " (23) 安装 gogs"
   echo -e "\033[32m $LAST_MESSAGE \033[0m"
   echo -e "=================================================================="
 
@@ -539,6 +548,8 @@ linux_cli(){
     install_btpanel
   elif [ "$input" == 22 ];then
     uninstall_snap
+  elif [ "$input" == 23 ];then
+    install_gogs
   fi
 
   # linux_cli

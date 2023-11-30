@@ -3,7 +3,10 @@ $CONFIG = array(
     'instanceid' => 'ocwcx4m2rthk',
     'passwordsalt' => 'GbJNI+qpaKaGqLxCz0mw/9m+G4U6a1',
     'secret' => 'IMxMN23rudHkzkDw96FCWj9mrHFlItjOmOpQ9lvPgi5SsnZf',
-    'trusted_domains' =>  ['*'],
+    'trusted_domains' =>
+    array(
+        0 => '*',
+    ),
     'datadirectory' => '/www/wwwroot/default/nextcloud/data',
     'dbtype' => 'mysql',
     'version' => '27.1.4.1',
@@ -17,11 +20,21 @@ $CONFIG = array(
     'dbpassword' => 'nextcloud',
     'installed' => true,
     'default_phone_region' => 'CN',
-    'memcache.local' => '\OC\Memcache\Redis',
-    'memcache.distributed' => '\OC\Memcache\Redis',
-    'memcache.locking' => '\OC\Memcache\Redis',
-    'redis' => array(
+    'memcache.local' => '\\OC\\Memcache\\Redis',
+    'memcache.distributed' => '\\OC\\Memcache\\Redis',
+    'memcache.locking' => '\\OC\\Memcache\\Redis',
+    'redis' =>
+    array(
         'host' => 'localhost',
         'port' => 6379,
     ),
+    'mail_from_address' => '337805',
+    'mail_smtpmode' => 'smtp',
+    'mail_sendmailmode' => 'smtp',
+    'mail_domain' => 'qq.com',
+    'mail_smtphost' => 'smtp.qq.com',
+    'mail_smtpport' => '465',
+    'mail_smtpauth' => 1,
+    'mail_smtpname' => '337805@qq.com',
+    'mail_smtppassword' => 'cuyyiwzfqbcobiif',
 );

@@ -452,6 +452,8 @@ install_btpanel(){
   wget -O bt-install.sh https://download.bt.cn/install/install-ubuntu_6.0.sh && bash bt-install.sh ed8484bec
 
   rm -f bt-install.sh
+  
+  \cp -f ./BTPanel-8.0.4/* /www/server/panel/BTPanel/
 }
 
 install_phpmyadmin(){

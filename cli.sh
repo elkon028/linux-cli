@@ -169,7 +169,7 @@ install_pyenv(){
     git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
     git clone https://github.com/pyenv/pyenv-virtualenv.git $PYENV_ROOT/plugins/pyenv-virtualenv
     cd $PYENV_ROOT && src/configure && make -C src
-    
+
     chmod -R 777 $PYENV_ROOT/shims
 
     echo "export PYENV_ROOT=$PYENV_ROOT" >> /etc/profile
@@ -345,7 +345,7 @@ install_jdk8(){
     if [ ! -f "./jdk-8u381-linux-x64.tar.gz" ]; then
         wget -c https://github.com/elkon028/linux-cli/releases/download/attach/jdk-8u381-linux-x64.tar.gz
     fi
-    
+
     tar zxf jdk-8u381-linux-x64.tar.gz
     mkdir -p /usr/local/java
     mv jdk1.8.0_381 /usr/local/java/jdk8

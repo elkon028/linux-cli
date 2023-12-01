@@ -423,6 +423,9 @@ install_nextcloud(){
   chmod +x /etc/systemd/system/nextcloudcron.*
 
   systemctl enable --now nextcloudcron.timer
+
+  # php-fpm.conf
+  # env[PATH] = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 }
 
 install_gogs(){
@@ -452,7 +455,7 @@ install_btpanel(){
   wget -O bt-install.sh https://download.bt.cn/install/install-ubuntu_6.0.sh && bash bt-install.sh ed8484bec
 
   rm -f bt-install.sh
-  
+
   \cp -f ./BTPanel-8.0.4/* /www/server/panel/BTPanel/
 }
 
@@ -489,6 +492,29 @@ set_composer(){
   composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 }
 
+install_php81_xdebug(){
+  PHP81_ROOT=/www/server/php/81
+  wget -c https://xdebug.org/files/xdebug-3.3.0.tgz \
+  && tar zxvf xdebug-3.3.0.tgz \
+  && cd xdebug-3.3.0 \
+  && phpize \
+  && ./configure --enable-xdebug --with-php-config=${PHP81_ROOT}/bin/php-config \
+  && make && make install \
+  && cd - && rm -rf xdebug-3.3.0* *.xml
+
+  # [xdebug]
+  # zend_extension = /www/server/php/81/lib/php/extensions/no-debug-non-zts-20210902/xdebug.so
+  # xdebug.idekey = vscode
+  # xdebug.mode = debug
+  # xdebug.discover_client_host = true
+  # xdebug.remote_cookie_expire_time = 3600
+  # ; XDEBUG_SESSION = 1 启用 0 禁用
+  # ; export XDEBUG_SESSION=1
+  # ; php test.php
+  # xdebug.start_with_request = trigger
+
+}
+
 linux_cli(){
   echo -e "=================================================================="
   echo -e "\033[32m Linux CLI \033[0m"
@@ -507,7 +533,7 @@ linux_cli(){
   echo -e " (19) 安装 ohmyzsh           (20) 安装 fcitx5"
   echo -e " (21) 安装宝塔               (22) 卸载 snap"
   echo -e " (23) 安装 gogs              (24) 安装 phpMyAdmin"
-  echo -e " (25) 安装 nextcloud"
+  echo -e " (25) 安装 nextcloud         (26) 安装 xdebug(php81)"
   echo -e "\033[32m $LAST_MESSAGE \033[0m"
   echo -e "=================================================================="
 
@@ -592,6 +618,8 @@ linux_cli(){
     install_phpmyadmin
   elif [ "$input" == 25 ];then
     install_nextcloud
+  elif [ "$input" == 26 ];then
+    install_php81_xdebug
   fi
 
   # linux_cli

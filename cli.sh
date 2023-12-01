@@ -268,9 +268,9 @@ install_pycharm(){
     tar xzf pycharm.tar.gz -C $JETBRAINS_ROOT
     rm -f pycharm.tar.gz
 
-    \cp -r $CURRENT_DIR/idea $JETBRAINS_ROOT
-    cat $CURRENT_DIR/files/jetbrains-pycharm.desktop > /usr/share/applications/jetbrains-pycharm.desktop
-    cat $CURRENT_DIR/files/jetbrains.vmoptions.sh > /etc/profile.d/jetbrains.vmoptions.sh
+    \cp -r $CURRENT_DIR/jetbra $JETBRAINS_ROOT
+    cat $CURRENT_DIR/jetbra/jetbrains-pycharm.desktop > /usr/share/applications/jetbrains-pycharm.desktop
+    cat $CURRENT_DIR/jetbra/jetbrains.vmoptions.sh > /etc/profile.d/jetbrains.vmoptions.sh
 
     gmsg 'pycharm安装成功'
   fi

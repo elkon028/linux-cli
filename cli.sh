@@ -68,9 +68,7 @@ set_systime_sync(){
 }
 
 set_alias(){
-  ALIAS_CHECK=$(cat /etc/profile | grep '# 设置别名')
-
-  if [ "$?" != "0" ]; then
+  if [ -n "$(cat /etc/profile | grep '# 设置别名')" ]; then
     rmsg '别名已设置(跳过)'
   else
     cat $CURRENT_DIR/files/alias >> /etc/profile
@@ -260,6 +258,7 @@ install_chrome(){
 }
 
 install_pycharm(){
+  # https://jetbra.in/s
   if [ -f "/opt/jetbrains/pycharm-2023.2.5/bin/pycharm.sh" ]; then
     rmsg 'pycharm已安装(跳过)'
   else

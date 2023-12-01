@@ -478,6 +478,15 @@ install_phpmyadmin(){
   rm -rf pma.zip
 }
 
+set_composer(){
+  # 查看 composer 配置
+  composer config -g -l
+  # 禁用默认源镜像
+  composer config -g secure-http false
+  # 修改为阿里云镜像源
+  composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+}
+
 linux_cli(){
   echo -e "=================================================================="
   echo -e "\033[32m Linux CLI \033[0m"

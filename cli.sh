@@ -28,24 +28,29 @@ update_system(){
 }
 
 install_flutter(){
-  apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
-  wget -O flutter.tar.xz -c https://storage.flutter-io.cn/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.2-stable.tar.xz
-  wget -O android-studio.tar.gz -c https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2022.3.1.21/android-studio-2022.3.1.21-linux.tar.gz
-
-  tar xf flutter.tar.xz
-  tar zxf android-studio.tar.gz
-  mkdir -p /opt/Android/Sdk
-  mv -f flutter /opt/
-  mv -f android-studio /opt/Android/studio
-  chown -R $USER:$USER /opt/Android
-
-  rm -f android-studio.tar.gz flutter.tar.xz
-
   if [ -z "$(command -v flutter)" ]; then
+    apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+    wget -O flutter.tar.xz -c https://storage.flutter-io.cn/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.2-stable.tar.xz
+    wget -O android-studio.tar.gz -c https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2022.3.1.21/android-studio-2022.3.1.21-linux.tar.gz
+
+    tar xf flutter.tar.xz
+    tar zxf android-studio.tar.gz
+    mkdir -p /opt/Android/Sdk
+    mv -f flutter /opt/
+    mv -f android-studio /opt/Android/studio
+    chown -R $USER:$USER /opt/Android
+
+    rm -f android-studio.tar.gz flutter.tar.xz
+
     echo 'export PUB_HOSTED_URL="https://pub.flutter-io.cn"' >> /etc/profile
     echo 'export FLUTTER_STORAGE_BASE_URL="https://storage.flutter-io.cn"' >> /etc/profile
     echo 'export PATH=$PATH:/opt/flutter/bin' >> /etc/profile
     source  /etc/profile
+
+    flutter config --android-studio-dir /opt/Android/studio
+    flutter config --android-sdk /opt/Android/Sdk
+
+    flutter doctor --android-licenses
   fi
 
 }

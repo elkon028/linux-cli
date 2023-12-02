@@ -27,11 +27,36 @@ update_system(){
   gmsg '系统更新成功'
 }
 
+install_flutter(){
+  apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+  wget -O flutter.tar.xz -c https://storage.flutter-io.cn/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.2-stable.tar.xz
+  wget -O android-studio.tar.gz -c https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2022.3.1.21/android-studio-2022.3.1.21-linux.tar.gz
+
+  tar xf flutter.tar.xz
+  tar zxf android-studio.tar.gz
+  mkdir -p /opt/Android/Sdk
+  mv -f flutter /opt/
+  mv -f android-studio /opt/Android/studio
+  chown -R $USER:$USER /opt/Android
+
+  rm -f android-studio.tar.gz flutter.tar.xz
+
+  if [ -z "$(command -v flutter)" ]; then
+    echo 'export PUB_HOSTED_URL="https://pub.flutter-io.cn"' >> /etc/profile
+    echo 'export FLUTTER_STORAGE_BASE_URL="https://storage.flutter-io.cn"' >> /etc/profile
+    echo 'export PATH=$PATH:/opt/flutter/bin' >> /etc/profile
+    source  /etc/profile
+  fi
+
+}
+
 install_package(){
   usermod -aG root $USER
   apt-get install -y zsh htop vim vim-gtk net-tools vlc flameshot\
     gnome-tweaks gnome-shell-extension-manager \
     ffmpeg imagemagick libgmp-dev
+
+
 
   # Ubuntu22.04下flameshot的使用问题
   # https://zhuanlan.zhihu.com/p/641339868
@@ -182,7 +207,7 @@ install_pyenv(){
     echo 'eval "$(pyenv init -)"' >> /etc/profile
     echo 'eval "$(pyenv virtualenv-init -)"' >> /etc/profile
 
-    source /etc/profile
+    source  /etc/profile
 
     cd $CURRENT_DIR
     gmsg 'pyenv安装成功'
@@ -365,7 +390,7 @@ install_jdk8(){
 
     echo 'export PATH=${JAVA_HOME}/bin:$PATH'  >> /etc/profile
 
-    source /etc/profile
+    source  /etc/profile
 
     gmsg 'jdk8安装成功'
   fi

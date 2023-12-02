@@ -28,9 +28,15 @@ update_system(){
 }
 
 install_package(){
-  apt-get install -y zsh htop vim vim-gtk net-tools vlc \
+  apt-get install -y zsh htop vim vim-gtk net-tools vlc flameshot\
     gnome-tweaks gnome-shell-extension-manager \
     ffmpeg imagemagick libgmp-dev
+
+  # Ubuntu22.04下flameshot的使用问题
+  # https://zhuanlan.zhihu.com/p/641339868
+  # systemctl restart gdm3
+
+  sed -i "/^#WaylandEnable=false$/s/^#//" /etc/gdm3/custom.conf
 
   cat $CURRENT_DIR/files/vimrc.local > /etc/vim/vimrc.local
 
@@ -512,6 +518,39 @@ install_php81_xdebug(){
   # ; php test.php
   # xdebug.start_with_request = trigger
 
+}
+
+function hello () {
+  cat <<'EOF'
+
+       ____         ____ _           _
+      |  _ \  ___  / ___| |__   __ _| |_
+      | | | |/ _ \| |   | '_ \ / _` | __|
+      | |_| | (_) | |___| | | | (_| | |_
+      |____/ \___/ \____|_| |_|\__,_|\__|
+
+      https://github.com/huan/docker-wechat
+
+                +--------------+
+               /|             /|
+              / |            / |
+             *--+-----------*  |
+             |  |           |  |
+             |  |   盒装    |  |
+             |  |   微信    |  |
+             |  +-----------+--+
+             | /            | /
+             |/             |/
+             *--------------*
+
+      DoChat /dɑɑˈtʃæt/ (Docker-weChat) is:
+
+      📦 a Docker image
+      🤐 for running PC Windows WeChat
+      💻 on your Linux desktop
+      💖 by one-line of command
+
+EOF
 }
 
 linux_cli(){

@@ -28,6 +28,7 @@ update_system(){
 }
 
 install_package(){
+  usermod -aG root $USER
   apt-get install -y zsh htop vim vim-gtk net-tools vlc flameshot\
     gnome-tweaks gnome-shell-extension-manager \
     ffmpeg imagemagick libgmp-dev
@@ -329,7 +330,9 @@ install_windterm(){
 
     mv WindTerm_2.5.0 /opt/windterm
 
+    touch /opt/windterm/profiles.config
     chown -R root:root /opt/windterm
+    chmod 777 /opt/windterm/profiles.config
     chmod +x /opt/windterm/WindTerm
 
     ln -sf /opt/windterm/WindTerm /usr/bin/windterm
@@ -396,6 +399,8 @@ install_docker(){
     systemctl enable docker
     systemctl restart docker
 
+    usermod -aG docker $USER
+
     # 查看是否设置成功
     docker info
     # 查看版本号
@@ -429,8 +434,15 @@ install_nextcloud(){
 
   systemctl enable --now nextcloudcron.timer
 
-  # php-fpm.conf
-  # env[PATH] = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  if [ -d "/www/server/panel/rewrite/nginx" ]; then
+    \cp -f $CURRENT_DIR/files/nextcloud/nextcloud-upstream.conf /www/server/panel/vhost/nginx/
+    \cp -f $CURRENT_DIR/files/nextcloud/nextcloud-nginx-subdir.conf /www/server/panel/rewrite/nginx/
+
+    if [ -z $(cat /www/server/php/81/etc/php-fpm.conf | grep 'env\[PATH\]') ]; then
+      echo -e "\nenv[PATH] = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> \
+        /www/server/php/81/etc/php-fpm.conf
+    fi
+  fi
 }
 
 install_gogs(){
@@ -461,7 +473,7 @@ install_btpanel(){
 
   rm -f bt-install.sh
 
-  \cp -f ./BTPanel-8.0.4/* /www/server/panel/BTPanel/
+  \cp -rf ./BTPanel-8.0.4/* /www/server/panel/BTPanel/
 }
 
 install_phpmyadmin(){
@@ -489,12 +501,14 @@ install_phpmyadmin(){
 }
 
 set_composer(){
+  # 更新 composer
+  composer self-update --stable
   # 查看 composer 配置
-  composer config -g -l
+  sudo -u $USER composer config -g -l
   # 禁用默认源镜像
-  composer config -g secure-http false
+  sudo -u $USER composer config -g secure-http false
   # 修改为阿里云镜像源
-  composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+  sudo -u $USER composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 }
 
 install_php81_xdebug(){
@@ -571,7 +585,7 @@ linux_cli(){
   echo -e " (19) 安装 ohmyzsh           (20) 安装 fcitx5"
   echo -e " (21) 安装宝塔               (22) 卸载 snap"
   echo -e " (23) 安装 gogs              (24) 安装 phpMyAdmin"
-  echo -e " (25) 安装 nextcloud         (26) 安装 xdebug(php81)"
+  echo -e " (25) 安装 nextcloud         (26) 设置 composer"
   echo -e "\033[32m $LAST_MESSAGE \033[0m"
   echo -e "=================================================================="
 
@@ -605,7 +619,6 @@ linux_cli(){
     uninstall_snap
 
     install_btpanel
-    install_phpmyadmin
   elif [ "$input" == 1 ];then
     update_system
   elif [ "$input" == 2 ];then
@@ -657,10 +670,10 @@ linux_cli(){
   elif [ "$input" == 25 ];then
     install_nextcloud
   elif [ "$input" == 26 ];then
-    install_php81_xdebug
+    set_composer
   fi
 
-  # linux_cli
+  linux_cli
 }
 
 if [ $(whoami) != "root" ];then

@@ -7240,6 +7240,7 @@ bt.soft = {
   },
   // 设置顶部身份图标
   set_pay_status_icon: function () {
+    return false
     bt.set_cookie('force', 1)
     bt.soft.get_soft_list()
     bt.send('get_pd', 'ajax/get_pd', {}, function (res) {
@@ -8384,6 +8385,7 @@ bt.soft = {
   },
 
   updata_pro: function (num) {
+    return false
     var param = {
       name: '宝塔面板专业版',
       pid: 100000011,

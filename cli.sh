@@ -591,6 +591,13 @@ linux_cli(){
 
   read -p "请输入索引号：" input;
 
+  ping -c 1 'www.baidu.com' > /dev/null 2>&1
+
+  if [ $? -ne 0 ]; then
+    rmsg '请连网后再试'
+    exit 0
+  fi
+
   if [ "$input" == 0 ];then
     exit 0
   elif [ "$input" == 'ALL' ];then
